@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>To Do List</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-pink-500 via-pink-300 to-pink-500 py-10 px-4">
+ 
+<div class="max-w-md mx-auto mt-10 bg-gray-600 p-6 rounded shadow">
+ 
+    <h2 class="text-2xl font-bold mb-5 text-center">
+        Personal To-Do List
+    </h2>
+ 
+    <!-- Add task form -->
+    <form id="taskForm" class="flex gap-2 mb-4">
+        <input type="text" id="taskInput" placeholder="Enter a task"
+            class="w-full border p-2 rounded">
+ 
+        <button type="submit"
+            class="bg-orange-500 text-white px-4 rounded">
+            Add
+        </button>
+    </form>
+ 
+    <p id="message" class="mb-3 text-center text-red-500"></p>
+ 
+    <!-- Task list -->
+    <ul id="taskList" class="space-y-2">
+        <!-- Tasks will be added here by JavaScript -->
+    </ul>
+ 
+    <p id="emptyMessage" class="mt-4 text-center text-gray-900">
+        No tasks yet. Add one above.
+    </p>
+ 
+</div>
+ 
+ 
+<script>
+    let tasks = [];
+ 
+    document.getElementById("taskForm").onsubmit = function (event) {
+ 
+        event.preventDefault();
+ 
+        let taskInput = document.getElementById("taskInput");
+        let taskText = taskInput.value.trim();
+        let message = document.getElementById("message");
+ 
+        // Mandatory field check
+        if (taskText == "") {
+            message.innerHTML = "Please enter a task.";
+            return;
+        }
+ 
+        message.innerHTML = "";
+ 
+        // Add new task to the array
+        tasks.push({
+            text: taskText,
+            completed: false
+        });
+ 
+        taskInput.value = "";
+ 
+        renderTasks();
+    };
+ 
+    function toggleComplete(index) {
+        tasks[index].completed = !tasks[index].completed;
+        renderTasks();
+    }
+ 
+    function deleteTask(index) {
+        tasks.splice(index, 1);
+        renderTasks();
+    }
+ 
+    function renderTasks() {
+ 
+        let taskList = document.getElementById("taskList");
+        let emptyMessage = document.getElementById("emptyMessage");
+ 
+        taskList.innerHTML = "";
+ 
+        if (tasks.length == 0) {
+            emptyMessage.style.display = "block";
+        } else {
+            emptyMessage.style.display = "none";
+        }
+ 
+        for (let i = 0; i < tasks.length; i++) {
+ 
+            let task = tasks[i];
+ 
+            let li = document.createElement("li");
+            li.className = "flex items-center justify-between bg-white p-2 rounded border";
+ 
+            let span = document.createElement("span");
+            span.innerHTML = task.text;
+            span.className = task.completed
+                ? "line-through text-gray-400 cursor-pointer"
+                : "text-gray-800 cursor-pointer";
+            span.onclick = function () {
+                toggleComplete(i);
+            };
+ 
+            let buttonGroup = document.createElement("div");
+            buttonGroup.className = "flex gap-2";
+ 
+            let completeBtn = document.createElement("button");
+            completeBtn.innerHTML = task.completed ? "Undo" : "Complete";
+            completeBtn.className = "bg-green-500 text-white text-sm px-2 py-1 rounded";
+            completeBtn.onclick = function () {
+                toggleComplete(i);
+            };
+ 
+            let deleteBtn = document.createElement("button");
+            deleteBtn.innerHTML = "Delete";
+            deleteBtn.className = "bg-red-500 text-white text-sm px-2 py-1 rounded";
+            deleteBtn.onclick = function () {
+                deleteTask(i);
+            };
+ 
+            buttonGroup.appendChild(completeBtn);
+            buttonGroup.appendChild(deleteBtn);
+ 
+            li.appendChild(span);
+            li.appendChild(buttonGroup);
+ 
+            taskList.appendChild(li);
+        }
+    }
+ 
+    // Initial render
+    renderTasks();
+</script>
+ 
+</body>
+</html>
